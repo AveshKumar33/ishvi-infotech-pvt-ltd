@@ -10,6 +10,8 @@ import { EnumModule } from './enum/enum.module';
 import { UsersModule } from './users/users.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RolesModule } from './roles/roles.module';
+import { PermissionModule } from './permission/permission.module';
+import { RolePermissionModule } from './role-permission/role-permission.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { RolesModule } from './roles/roles.module';
     EnumModule,
     UsersModule,
     RolesModule,
+    PermissionModule,
+    RolePermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

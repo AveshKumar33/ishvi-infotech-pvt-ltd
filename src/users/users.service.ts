@@ -54,10 +54,10 @@ export class UsersService implements OnModuleInit {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
-    return user;
+  async findOne(id: number): Promise<any> {
+    // const user = await this.userRepository.findOne({ where: { id } });
+    // if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    return;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {

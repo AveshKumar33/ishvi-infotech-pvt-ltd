@@ -1,8 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+// import { RolePermission } from 'src/role-permission/entities/role-permission.entity';
 
-@Entity('roles')
+@Entity()
 export class Role {
-    @PrimaryGeneratedColumn('uuid') // ✅ Generates UUID in the app, not SQL
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({ unique: true })
@@ -16,4 +18,10 @@ export class Role {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updated_at: Date;
+
+    @OneToMany(() => User, (user) => user.role, { cascade: true, nullable: true })
+    users: User[];
+
+    // @OneToMany(() => RolePermission, (rolePermission) => rolePermission.role, { cascade: true, nullable: true })
+    // role_permissions: RolePermission[];
 }
