@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
-export class RolePermissionsTable1743337560540 implements MigrationInterface {
+export class RolePermissionsTable1743832204020 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const databaseName = await queryRunner.getCurrentDatabase();
 

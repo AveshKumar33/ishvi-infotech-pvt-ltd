@@ -13,10 +13,11 @@ import { RolesModule } from './roles/roles.module';
 import { PermissionModule } from './permission/permission.module';
 import { RolePermissionModule } from './role-permission/role-permission.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env/.local.env',
+      envFilePath: `.env/.stage.local.env`,
       /** Load multiple .env files */
       // envFilePath: ['.env', '.env.local'], 
 

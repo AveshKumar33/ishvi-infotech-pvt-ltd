@@ -1,6 +1,6 @@
-import { User } from '../../users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-// import { RolePermission } from 'src/role-permission/entities/role-permission.entity';
+import { RolePermission } from 'src/role-permission/entities/role-permission.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Role {
@@ -19,9 +19,9 @@ export class Role {
     @UpdateDateColumn({ type: 'timestamp' })
     updated_at: Date;
 
-    @OneToMany(() => User, (user) => user.role, { cascade: true, nullable: true })
+    @OneToMany(() => User, (user) => user.role, { cascade: true, })
     users: User[];
 
-    // @OneToMany(() => RolePermission, (rolePermission) => rolePermission.role, { cascade: true, nullable: true })
-    // role_permissions: RolePermission[];
+    @OneToMany(() => RolePermission, (role_permission) => role_permission.role, { cascade: true })
+    role_permissions: RolePermission[];
 }

@@ -1,12 +1,11 @@
 import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import * as moment from 'moment-timezone';
 import { ConfigService } from '@nestjs/config';
+import { handleException } from 'src/exceptions/exception-handler';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -15,58 +14,45 @@ export class UsersService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     private readonly configService: ConfigService
   ) { }
 
   async onModuleInit() {
-    this.logger.log('Initializing Cron Jobs...');
-  }
-
-  @Cron(CronExpression.EVERY_30_SECONDS)
-  async firstCronJob() {
-    this.logger.log('First Cron Executed - Checking Second Job Execution Time');
-
-    const scheduledTime = this.configService.get<string>('SECOND_CRON_TIME', '08:50:00'); // Fetch from .env
-
-    const now = moment.utc().format('HH:mm:00'); // Current UTC time in HH:mm:ss format
-
-    console.log(`Current Time: ${now} | Scheduled Second Cron Time: ${scheduledTime}`);
-
-    if (now === scheduledTime) {
-      this.logger.log('Triggering Second Cron Job at Scheduled Time');
-      await this.secondCronJob();
-    }
-  }
-
-  async secondCronJob() {
-    this.logger.log('Second Cron Executed Successfully');
-    console.log('Avesh - Second Cron Executed');
-    // Your business logic here
+    this.logger.log('UsersService initialized...');
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    this.logger.log('Creating new user...');
-    const user = this.userRepository.create(createUserDto);
-    return await this.userRepository.save(user);
+    try {
+      console.log('Creating new user...');
+      let user = this.userRepository.create(createUserDto);
+      user = await this.userRepository.save(user);
+      return user;
+    } catch (error) {
+      handleException(error, 'Error creating user');
+      throw error; // 👈 satisfies TS (this will never run if handleException throws)
+    }
   }
+
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ relations: ['role'] });
   }
 
-  async findOne(id: number): Promise<any> {
-    // const user = await this.userRepository.findOne({ where: { id } });
-    // if (!user) throw new NotFoundException(`User with ID ${id} not found`);
-    return;
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] });
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    return user;
+  }
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+
+    const updated = this.userRepository.merge(user, updateUserDto);
+    return await this.userRepository.save(updated);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.findOne(id); // Ensure user exists
-    await this.userRepository.update(id, updateUserDto);
-    return this.findOne(id);
-  }
-
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     await this.findOne(id); // Ensure user exists
     await this.userRepository.delete(id);
     return { message: `User with ID ${id} deleted successfully` };
