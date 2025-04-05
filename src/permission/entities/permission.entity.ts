@@ -1,7 +1,7 @@
 import { RolePermission } from 'src/role-permission/entities/role-permission.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity()
+@Entity('permissions')
 export class Permission {
     @PrimaryGeneratedColumn('uuid') // ✅ Generates UUID in the app, not SQL
     id: string;

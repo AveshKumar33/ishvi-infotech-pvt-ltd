@@ -1,22 +1,25 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { handleException } from 'src/exceptions/exception-handler';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   private readonly logger = new Logger(UsersService.name);
+  private readonly userRepository: Repository<User>
 
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-
+    private readonly dataSource: DataSource,
     private readonly configService: ConfigService
-  ) { }
+  ) {
+    this.userRepository = this.dataSource.getRepository(User);
+
+  }
 
   async onModuleInit() {
     this.logger.log('UsersService initialized...');
@@ -24,8 +27,11 @@ export class UsersService implements OnModuleInit {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
+      const { email, name, role_id, password, profile_picture } = createUserDto
+      const roleInfo = await this.dataSource.getRepository(Role).findOne({ where: { id: role_id } })
+      if (!roleInfo) throw new NotFoundException("Role Not Found")
       console.log('Creating new user...');
-      let user = this.userRepository.create(createUserDto);
+      let user = this.userRepository.create({ email, name, password, role: roleInfo });
       user = await this.userRepository.save(user);
       return user;
     } catch (error) {

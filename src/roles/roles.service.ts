@@ -20,9 +20,12 @@ export class RolesService implements OnModuleInit {
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     try {
-      console.log('role is comming');
+      console.log('role is comming', createRoleDto);
+      const { name, description } = createRoleDto
+      const role = this.roleRepository.create({
+        name, description
 
-      const role = this.roleRepository.create(createRoleDto);
+      });
       return await this.roleRepository.save(role);
     } catch (error) {
       handleException(error, 'Error creating role');

@@ -7,7 +7,7 @@ async function bootstrap() {
   console.log(`avesh our port is running ${process.env.PORT}`);
   const app = await NestFactory.create(AppModule);
   // ✅ Enable CORS globally
-  app.enableCors();
+  app.enableCors(true);
 
   // ✅ Enable & configure body-parser
   app.use(bodyParser.json({ limit: '10mb' }));
