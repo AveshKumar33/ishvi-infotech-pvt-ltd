@@ -1,4 +1,4 @@
-export interface Language extends Document {
+export interface LanguageDocument extends Document {
     name: string;
     code: string;
 }

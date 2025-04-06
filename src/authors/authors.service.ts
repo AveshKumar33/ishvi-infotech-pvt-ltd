@@ -3,11 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
-import { Author } from './interfaces/author.interface';
+import { Author } from './schemas/authors.schemsa';
 
 @Injectable()
 export class AuthorsService {
-  constructor(@InjectModel('Author') private readonly authorModel: Model<Author>) { }
+  constructor(@InjectModel(Author.name) private readonly authorModel: Model<Author>) { }
 
   async create(createAuthorDto: CreateAuthorDto): Promise<Author> {
     const newAuthor = new this.authorModel(createAuthorDto);
@@ -18,15 +18,15 @@ export class AuthorsService {
     return this.authorModel.find().exec();
   }
 
-  async findOne(id: string): Promise<any> {
+  async findOne(id: string) {
     return this.authorModel.findById(id).exec();
   }
 
-  async update(id: string, updateAuthorDto: UpdateAuthorDto): Promise<any> {
+  async update(id: string, updateAuthorDto: UpdateAuthorDto) {
     return this.authorModel.findByIdAndUpdate(id, updateAuthorDto, { new: true }).exec();
   }
 
-  async remove(id: string): Promise<any> {
+  async remove(id: string) {
     return this.authorModel.findByIdAndDelete(id).exec();
   }
 }

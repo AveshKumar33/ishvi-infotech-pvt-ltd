@@ -3,11 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
-import { Language } from './interfaces/language.interface';
+import { Language } from './schemas/language.schema';
 
 @Injectable()
 export class LanguagesService {
-  constructor(@InjectModel('Language') private readonly languageModel: Model<Language>) { }
+  constructor(@InjectModel(Language.name) private readonly languageModel: Model<Language>) { }
 
   async create(createLanguageDto: CreateLanguageDto): Promise<Language> {
     const newLanguage = new this.languageModel(createLanguageDto);

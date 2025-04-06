@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { AuthorsController } from './authors.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Author } from './entities/author.entity';
-import { AuthorSchema } from './schemas/authors.schemsa';
+import { Author, AuthorSchema } from './schemas/authors.schemsa';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Author.name, schema: AuthorSchema }])],

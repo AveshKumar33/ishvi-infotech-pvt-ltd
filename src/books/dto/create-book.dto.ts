@@ -1,17 +1,63 @@
-import { Types } from 'mongoose';
+import {
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsNumber,
+    IsBoolean,
+    IsMongoId,
+    IsArray
+} from 'class-validator';
 
 export class CreateBookDto {
-    readonly title: string;
-    readonly description?: string;
-    readonly price: number;
-    readonly cover_image?: string;
-    readonly stock?: number;
-    readonly ISBN?: string;
-    readonly code?: string;
-    readonly sample_pdf?: string;
-    readonly status?: boolean;
-    readonly author: Types.ObjectId;
-    readonly language: Types.ObjectId;
-    readonly semester: Types.ObjectId;
-    readonly courses: Types.ObjectId[];
+    @IsNotEmpty()
+    @IsString()
+    title: string;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    price: number;
+
+    @IsOptional()
+    @IsString()
+    cover_image?: string;
+
+    @IsOptional()
+    @IsNumber()
+    stock?: number;
+
+    @IsOptional()
+    @IsString()
+    ISBN?: string;
+
+    @IsOptional()
+    @IsString()
+    code?: string;
+
+    @IsOptional()
+    @IsString()
+    sample_pdf?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    status?: boolean;
+
+    @IsNotEmpty()
+    @IsMongoId()
+    author: string;
+
+    @IsNotEmpty()
+    @IsMongoId()
+    language: string;
+
+    @IsNotEmpty()
+    @IsMongoId()
+    semester: string;
+
+    @IsArray()
+    @IsMongoId({ each: true })
+    courses: string[];
 }
