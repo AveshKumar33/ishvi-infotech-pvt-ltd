@@ -12,6 +12,11 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { RolesModule } from './roles/roles.module';
 import { PermissionModule } from './permission/permission.module';
 import { RolePermissionModule } from './role-permission/role-permission.module';
+import { AuthorsModule } from './authors/authors.module';
+import { CoursesModule } from './courses/courses.module';
+import { BooksModule } from './books/books.module';
+import { SemestersModule } from './semesters/semesters.module';
+import { LanguagesModule } from './languages/languages.module';
 
 
 @Module({
@@ -41,6 +46,11 @@ import { RolePermissionModule } from './role-permission/role-permission.module';
     RolesModule,
     PermissionModule,
     RolePermissionModule,
+    AuthorsModule,
+    CoursesModule,
+    BooksModule,
+    SemestersModule,
+    LanguagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
