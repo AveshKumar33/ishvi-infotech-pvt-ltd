@@ -39,8 +39,8 @@ export const whatsappImageFilter = (req, file, callback) => {
     callback(null, true)
 }
 export const imageFileStorage = (req, file, callback) => {
-    if (file.fieldname === "initial_payment_attachment") {
-        return callback(null, "./public/customers/images")
+    if (file.fieldname === "profile_picture") {
+        return callback(null, "./public/users/picture")
     } else if (file.fieldname === "performa_invoice") {
         return callback(null, "./public/orders/performa")
     } else if (file.fieldname.includes("proposal_attachments") || file.fieldname.includes("attachments")) {

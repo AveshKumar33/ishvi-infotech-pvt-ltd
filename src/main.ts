@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
+import * as express from "express"
+import { join } from "path"
 
 
 async function bootstrap() {
@@ -8,6 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // ✅ Enable CORS globally
   app.enableCors(true);
+  app.setGlobalPrefix("/v1/api", { exclude: ["public/*"] })
+  app.use("/public", express.static(join(__dirname, "..", "public")))
 
   // ✅ Enable & configure body-parser
   app.use(bodyParser.json({ limit: '10mb' }));

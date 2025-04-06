@@ -17,6 +17,7 @@ import { CoursesModule } from './courses/courses.module';
 import { BooksModule } from './books/books.module';
 import { SemestersModule } from './semesters/semesters.module';
 import { LanguagesModule } from './languages/languages.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -51,6 +52,7 @@ import { LanguagesModule } from './languages/languages.module';
     BooksModule,
     SemestersModule,
     LanguagesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

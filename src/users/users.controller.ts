@@ -1,14 +1,28 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName, imageFileFilter, imageFileStorage } from 'src/interceptors/file-upload.intercepter';
+import { UploadFileValidationPipe } from 'src/pipes/upload-validation-file.pipe';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  @UseInterceptors(
+    FileInterceptor("profile_picture", {
+      storage: diskStorage({
+        destination: imageFileStorage,
+        filename: editFileName
+      }),
+      fileFilter: imageFileFilter
+    })
+  )
+  create(@Body() createUserDto: CreateUserDto, @UploadedFile(new UploadFileValidationPipe()) file: Express.Multer.File) {
+    if (file) Object.assign(createUserDto, { profile_picture: file?.filename })
     return this.usersService.create(createUserDto);
   }
 
