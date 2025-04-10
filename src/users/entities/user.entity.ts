@@ -21,6 +21,9 @@ export class User {
     @ManyToOne(() => Role, (role) => role.users, { onDelete: 'SET NULL', nullable: true })
     role: Role;
 
+    @Column({ default: false })
+    is_default: boolean;
+
     @CreateDateColumn({ type: 'timestamp' })
     created_at: Date;
 

@@ -46,6 +46,12 @@ export class UserTable1743832037500 implements MigrationInterface {
                         isNullable: false,
                     },
                     {
+                        name: "is_default",
+                        type: "boolean",
+                        isNullable: false,
+                        default: false
+                    },
+                    {
                         name: "profile_picture",
                         type: "varchar",
                         isNullable: true,
