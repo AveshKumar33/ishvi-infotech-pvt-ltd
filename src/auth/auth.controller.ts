@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Request, Delete, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { diskStorage } from 'multer';
+import { editFileName, imageFileFilter, imageFileStorage } from 'src/interceptors/file-upload.intercepter';
+import { UploadFileValidationPipe } from 'src/pipes/upload-validation-file.pipe';
+import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  // @UseGuards(LocalAuthGuard)
+  @Post('sign-up')
+  @UseInterceptors(
+    FileInterceptor("profile_picture", {
+      storage: diskStorage({
+        destination: imageFileStorage,
+        filename: editFileName
+      }),
+      fileFilter: imageFileFilter
+    })
+  )
+  // @UseGuards(PermissionGuard('user_create'))
+  create(@Body() dto: SignUpDto, @UploadedFile(new UploadFileValidationPipe()) file: Express.Multer.File) {
+    if (file) Object.assign(dto, { profile_picture: file?.filename })
+    return this.authService.signup(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('log-in')
+  async login(@Body() dto: SignInDto) {
+    return this.authService.login(dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  // @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 }
+
+
+
+
+

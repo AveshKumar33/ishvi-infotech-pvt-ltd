@@ -1,5 +1,5 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseConfigService } from './shared/databases/mongodb-connection';
@@ -19,6 +19,7 @@ import { SemestersModule } from './semesters/semesters.module';
 import { LanguagesModule } from './languages/languages.module';
 import { AuthModule } from './auth/auth.module';
 import { PermissionService } from './permission/permission.service';
+import { MulterModule } from '@nestjs/platform-express/multer';
 
 
 @Module({
@@ -32,14 +33,21 @@ import { PermissionService } from './permission/permission.service';
       ignoreEnvFile: false, // Change to `true` in production
     }),
     ScheduleModule.forRoot(),
+    MulterModule.register({
+      dest: "./files"
+    }),
 
     // ✅ MongoDB Connection
     MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useClass: MongooseConfigService,
     }),
 
     // ✅ MySQL Connection
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useClass: MysqlConfigService,
     }),
 

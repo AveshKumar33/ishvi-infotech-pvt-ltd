@@ -12,22 +12,6 @@ import { PermissionGuard } from 'src/guards/permission.guards';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  @Post()
-  @UseInterceptors(
-    FileInterceptor("profile_picture", {
-      storage: diskStorage({
-        destination: imageFileStorage,
-        filename: editFileName
-      }),
-      fileFilter: imageFileFilter
-    })
-  )
-  // @UseGuards(PermissionGuard('user_create'))
-  create(@Body() createUserDto: CreateUserDto, @UploadedFile(new UploadFileValidationPipe()) file: Express.Multer.File) {
-    if (file) Object.assign(createUserDto, { profile_picture: file?.filename })
-    return this.usersService.create(createUserDto);
-  }
-
   @Get()
   findAll() {
     return this.usersService.findAll();

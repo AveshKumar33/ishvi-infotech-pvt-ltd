@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { handleException } from 'src/exceptions/exception-handler';
-import { Role } from 'src/roles/entities/role.entity';
+
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -25,26 +24,15 @@ export class UsersService implements OnModuleInit {
     this.logger.log('UsersService initialized...');
   }
 
-  async create(createUserDto: CreateUserDto): Promise<String> {
-    const { email, name, role_id, password, profile_picture } = createUserDto
-    const queryRunner = this.dataSource.createQueryRunner()
-
+  async createUser(dto: CreateUserDto, queryRunner: QueryRunner): Promise<String> {
     try {
-      await queryRunner.connect()
-      await queryRunner.startTransaction()
-      const roleInfo = await this.dataSource.getRepository(Role).findOne({ where: { id: role_id } })
-      if (!roleInfo) throw new NotFoundException("Role Not Found")
-      console.log('Creating new user...');
-      let user = this.userRepository.create({ email, name, profile_picture, password, role: roleInfo });
+      let user = this.userRepository.create(dto);
       user = await queryRunner.manager.save(user);
-      await queryRunner.commitTransaction()
-      return `user ${user.name} Sign-up successfully`;
+      const { password, name, ...rest } = user
+      return name
     } catch (error) {
-      await queryRunner.rollbackTransaction()
       handleException(error, 'Error creating user');
-      throw error; // 👈 satisfies TS (this will never run if handleException throws)
-    } finally {
-      await queryRunner.release()
+      throw error;
     }
   }
 
@@ -53,10 +41,15 @@ export class UsersService implements OnModuleInit {
     return await this.userRepository.find({ relations: ['role'] });
   }
 
-  async findOne(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] });
-    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
-    return user;
+  async findOne(email: string): Promise<User> {
+    try {
+      const user = await this.userRepository.findOne({ where: { email }, relations: ['role'] });
+      if (!user) throw new NotFoundException(`User with user name ${email} not found`);
+      return user;
+    } catch (error) {
+      handleException(error, "Error in get user by id")
+      throw error
+    }
   }
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
