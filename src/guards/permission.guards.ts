@@ -39,7 +39,7 @@ export function PermissionGuard(...requiredPermissions: string[]): Type<CanActiv
 
             const hasAll = requiredPermissions.every(p => userPermissions.includes(p));
 
-            if (!hasAll) throw new ForbiddenException('Insufficient permissions');
+            if (!hasAll) throw new ForbiddenException('permission denied');
 
             return true;
         }
