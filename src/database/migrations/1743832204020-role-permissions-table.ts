@@ -22,16 +22,6 @@ export class RolePermissionsTable1743832204020 implements MigrationInterface {
             `)
         )[0]?.COLLATION_NAME || 'utf8mb4_unicode_ci';
 
-        const moduleCollation = (
-            await queryRunner.query(`
-                SELECT COLLATION_NAME 
-                FROM information_schema.columns
-                WHERE TABLE_NAME = 'modules'
-                AND COLUMN_NAME = 'id'
-                AND TABLE_SCHEMA = '${databaseName}'
-            `)
-        )[0]?.COLLATION_NAME || 'utf8mb4_unicode_ci';
-
         // Get collation for permissionId
         const permissionCollation = (
             await queryRunner.query(`
@@ -76,13 +66,7 @@ export class RolePermissionsTable1743832204020 implements MigrationInterface {
                         isNullable: true,
                         collation: permissionCollation,
                     },
-                    {
-                        name: "moduleId",
-                        type: "varchar",
-                        length: "36",
-                        isNullable: true,
-                        collation: moduleCollation,
-                    },
+
                     {
                         name: "created_at",
                         type: "timestamp",
@@ -115,16 +99,6 @@ export class RolePermissionsTable1743832204020 implements MigrationInterface {
                 columnNames: ["permissionId"],
                 referencedColumnNames: ["id"],
                 referencedTableName: "permissions",
-                onDelete: "SET NULL",
-            })
-        );
-
-        await queryRunner.createForeignKey(
-            "role_permissions",
-            new TableForeignKey({
-                columnNames: ["moduleId"],
-                referencedColumnNames: ["id"],
-                referencedTableName: "modules",
                 onDelete: "SET NULL",
             })
         );

@@ -1,6 +1,6 @@
 export const MODULE_LIST = [
     {
-        name: 'create_user',
+        name: 'user_create',
         alias_name: 'permission',
         display_name: 'Permissions',
         description: 'Permission Module',
@@ -8,7 +8,7 @@ export const MODULE_LIST = [
         status: 1,
     },
     {
-        name: 'edit_user',
+        name: 'user_update',
         alias_name: 'role',
         display_name: 'Roles',
         description: 'User Roles Module',
@@ -16,7 +16,7 @@ export const MODULE_LIST = [
         status: 1,
     },
     {
-        name: 'delete_user',
+        name: 'user_delete',
         alias_name: 'file_manager',
         display_name: 'File Managers',
         description: 'File Managers Module',
@@ -24,7 +24,7 @@ export const MODULE_LIST = [
         status: 1,
     },
     {
-        name: 'list_user',
+        name: 'user_list',
         alias_name: 'file_manager',
         display_name: 'File Managers',
         description: 'File Managers Module',
