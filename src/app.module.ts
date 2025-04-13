@@ -24,6 +24,7 @@ import { MulterModule } from '@nestjs/platform-express/multer';
 
 @Module({
   imports: [
+
     ConfigModule.forRoot({
       envFilePath: `.env/.stage.local.env`,
       /** Load multiple .env files */
@@ -67,8 +68,6 @@ import { MulterModule } from '@nestjs/platform-express/multer';
   providers: [AppService],
 })
 export class AppModule implements OnModuleInit {
-  // constructor() {}
-  // async onModuleInit() {}
   constructor(
     private readonly permissionService: PermissionService,
   ) { }

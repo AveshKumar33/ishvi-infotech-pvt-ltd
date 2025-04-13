@@ -26,6 +26,7 @@ import { UsersModule } from "src/users/users.module"
         }
       })
     }),
+
     TypeOrmModule.forFeature([])
   ],
   controllers: [AuthController],

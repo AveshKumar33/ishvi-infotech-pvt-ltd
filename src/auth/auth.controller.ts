@@ -7,12 +7,14 @@ import { editFileName, imageFileFilter, imageFileStorage } from 'src/interceptor
 import { UploadFileValidationPipe } from 'src/pipes/upload-validation-file.pipe';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { User } from 'src/users/entities/user.entity';
+import { GetUser } from 'src/decorators/get-auth-user.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  // @UseGuards(LocalAuthGuard)
   @Post('sign-up')
   @UseInterceptors(
     FileInterceptor("profile_picture", {
@@ -23,7 +25,6 @@ export class AuthController {
       fileFilter: imageFileFilter
     })
   )
-  // @UseGuards(PermissionGuard('user_create'))
   create(@Body() dto: SignUpDto, @UploadedFile(new UploadFileValidationPipe()) file: Express.Multer.File) {
     if (file) Object.assign(dto, { profile_picture: file?.filename })
     return this.authService.signup(dto);
@@ -34,9 +35,11 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@Request() req, @GetUser() user: User) {
+    console.log('auth user :: --->>', user);
+
     return req.user;
   }
 }
