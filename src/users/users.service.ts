@@ -25,18 +25,26 @@ export class UsersService implements OnModuleInit {
     this.logger.log('UsersService initialized...');
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<String> {
+    const { email, name, role_id, password, profile_picture } = createUserDto
+    const queryRunner = this.dataSource.createQueryRunner()
+
     try {
-      const { email, name, role_id, password, profile_picture } = createUserDto
+      await queryRunner.connect()
+      await queryRunner.startTransaction()
       const roleInfo = await this.dataSource.getRepository(Role).findOne({ where: { id: role_id } })
       if (!roleInfo) throw new NotFoundException("Role Not Found")
       console.log('Creating new user...');
-      let user = this.userRepository.create({ email, name, password, role: roleInfo });
-      user = await this.userRepository.save(user);
-      return user;
+      let user = this.userRepository.create({ email, name, profile_picture, password, role: roleInfo });
+      user = await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction()
+      return `user ${user.name} Sign-up successfully`;
     } catch (error) {
+      await queryRunner.rollbackTransaction()
       handleException(error, 'Error creating user');
       throw error; // 👈 satisfies TS (this will never run if handleException throws)
+    } finally {
+      await queryRunner.release()
     }
   }
 
@@ -63,4 +71,11 @@ export class UsersService implements OnModuleInit {
     await this.userRepository.delete(id);
     return { message: `User with ID ${id} deleted successfully` };
   }
+
+
+
+
+
+
+
 }

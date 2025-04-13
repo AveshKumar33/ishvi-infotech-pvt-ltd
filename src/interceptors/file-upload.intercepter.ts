@@ -40,7 +40,7 @@ export const whatsappImageFilter = (req, file, callback) => {
 }
 export const imageFileStorage = (req, file, callback) => {
     if (file.fieldname === "profile_picture") {
-        return callback(null, "./public/users/picture")
+        return callback(null, "./public/users/pictures")
     } else if (file.fieldname === "performa_invoice") {
         return callback(null, "./public/orders/performa")
     } else if (file.fieldname.includes("proposal_attachments") || file.fieldname.includes("attachments")) {

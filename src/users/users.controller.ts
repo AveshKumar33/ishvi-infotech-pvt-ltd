@@ -22,7 +22,7 @@ export class UsersController {
       fileFilter: imageFileFilter
     })
   )
-  @UseGuards(PermissionGuard('user_create'))
+  // @UseGuards(PermissionGuard('user_create'))
   create(@Body() createUserDto: CreateUserDto, @UploadedFile(new UploadFileValidationPipe()) file: Express.Multer.File) {
     if (file) Object.assign(createUserDto, { profile_picture: file?.filename })
     return this.usersService.create(createUserDto);
