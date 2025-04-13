@@ -1,28 +1,34 @@
 export const MODULE_LIST = [
     {
-        "name": "PermissionsModule",
-        "alias_name": "permission",
-        "display_name": "Permissions",
-        "description": "Permission Module",
-        "category": "Core",
-        "status": "Active",
-        "permissions": ["create", "edit", "view", "list"]
+        name: 'create_user',
+        alias_name: 'permission',
+        display_name: 'Permissions',
+        description: 'Permission Module',
+        category: 'Core',
+        status: 1,
     },
     {
-        "name": "RolesModule",
-        "display_name": "Roles",
-        "alias_name": "role",
-        "description": "User Roles Module",
-        "category": "Core",
-        "status": "Active",
-        "permissions": ["create", "edit", "view", "list"]
+        name: 'edit_user',
+        alias_name: 'role',
+        display_name: 'Roles',
+        description: 'User Roles Module',
+        category: 'Core',
+        status: 1,
     },
     {
-        "name": "FileManagersModule",
-        "display_name": "File Managers",
-        "alias_name": "file_manager",
-        "description": "File Managers Module",
-        "category": "Core",
-        "status": "Active",
-        "permissions": ["read", "write", "read_all"]
-    },]
+        name: 'delete_user',
+        alias_name: 'file_manager',
+        display_name: 'File Managers',
+        description: 'File Managers Module',
+        category: 'Core',
+        status: 1,
+    },
+    {
+        name: 'list_user',
+        alias_name: 'file_manager',
+        display_name: 'File Managers',
+        description: 'File Managers Module',
+        category: 'Core',
+        status: 1,
+    },
+];

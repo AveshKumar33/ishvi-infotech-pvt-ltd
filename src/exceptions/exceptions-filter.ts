@@ -26,18 +26,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     private extractErrorMessage(exception: any): string {
-        if (exception instanceof CustomException) {
-            const response = exception.getResponse() as any;
-            return response.message;
-        }
-
+        if (exception instanceof CustomException) return exception.getResponse().message
         if (exception instanceof BadRequestException) {
-            const response = exception.getResponse() as any;
-            if (typeof response.message === 'string') return response.message;
-            if (Array.isArray(response.message)) return response.message[0];
+            if (typeof exception.getResponse()["message"] === "string") return exception.getResponse()["message"]
+            return exception.getResponse()["message"][0]
         }
 
-        return `${exception}`;
+        // Extract and modify the error message logic here
+        // You can access exception details and customize the message
+        return `${exception}`
     }
-
 }

@@ -33,7 +33,6 @@ export class Permission {
     @Column()
     release_date: Date
 
-
     @OneToMany(() => RolePermission, (rolePermission) => rolePermission.permission, { cascade: true, })
     role_permissions: RolePermission[];
 

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,6 +18,7 @@ import { BooksModule } from './books/books.module';
 import { SemestersModule } from './semesters/semesters.module';
 import { LanguagesModule } from './languages/languages.module';
 import { AuthModule } from './auth/auth.module';
+import { PermissionService } from './permission/permission.service';
 
 
 @Module({
@@ -57,4 +58,13 @@ import { AuthModule } from './auth/auth.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements OnModuleInit {
+  // constructor() {}
+  // async onModuleInit() {}
+  constructor(
+    private readonly permissionService: PermissionService,
+  ) { }
+  async onModuleInit() {
+    await this.permissionService.seedPermissions()
+  }
+} 

@@ -1,23 +1,65 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+// import { CanActivate, ExecutionContext, forwardRef, Inject, mixin, Type } from "@nestjs/common"
 
-@Injectable()
-export class PermissionsGuard implements CanActivate {
-    constructor(private reflector: Reflector) { }
+// export const PermissionGuard = (permission: string): Type<CanActivate> => {
+//     class PermissionGuardMixin implements CanActivate {
+//         constructor(
+//             @Inject(forwardRef(() => RolePermissionsService))
+//             private rolePermissionsServices: RolePermissionsService
+//         ) { }
 
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-        const requiredPermissions = this.reflector.get<string[]>('view', context.getHandler());
-        if (!requiredPermissions) {
-            return true;
-        }
+//         async canActivate(context: ExecutionContext) {
+//             // do something with context and role
+//             const request = context.switchToHttp().getRequest()
+//             const user = request.user.authuser
+//             if (!!request.user.authuser.default) return true
+//             let resultStatus = false
+//             for await (const role of user.role_list) {
+//                 let result = await this.rolePermissionsServices.getPermission(role, permission)
+//                 if (result) {
+//                     resultStatus = true
+//                     break
+//                 }
+//             }
+//             if (resultStatus) {
+//                 return true
+//             } else {
+//                 return false
+//             }
+//         }
+//     }
 
-        const request = context.switchToHttp().getRequest();
-        const user = request.user;
+//     const guard = mixin(PermissionGuardMixin)
+//     return guard
+// }
 
-        const userPermissions = user.role?.role_permissions?.map(rp => rp.permission.name) || [];
+// export const PermissionsGuard = (permissions: string[]): Type<CanActivate> => {
+//     class PermissionGuardMixin implements CanActivate {
+//         constructor(
+//             @Inject(forwardRef(() => RolePermissionsService))
+//             private rolePermissionsServices: RolePermissionsService
+//         ) { }
 
-        return requiredPermissions.every(permission =>
-            userPermissions.includes(permission),
-        );
-    }
-}
+//         async canActivate(context: ExecutionContext) {
+//             // do something with context and role
+//             const request = context.switchToHttp().getRequest()
+//             const user = request.user.authuser
+//             if (!!request.user.authuser.default) return true
+//             let resultStatus = false
+//             for await (const role of user.role_list) {
+//                 let result = await this.rolePermissionsServices.getPermissions(role, permissions)
+//                 if (result.length > 0) {
+//                     resultStatus = true
+//                     break
+//                 }
+//             }
+//             if (resultStatus) {
+//                 return true
+//             } else {
+//                 return false
+//             }
+//         }
+//     }
+
+//     const guard = mixin(PermissionGuardMixin)
+//     return guard
+// }
