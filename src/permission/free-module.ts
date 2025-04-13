@@ -1,4 +1,4 @@
-export const permission_list = [
+export const MODULE_LIST = [
     {
         "name": "PermissionsModule",
         "alias_name": "permission",

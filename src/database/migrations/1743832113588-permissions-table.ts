@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
 export class PermissionsTable1743832113588 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -26,6 +26,43 @@ export class PermissionsTable1743832113588 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
+                        name: "display_name",
+                        type: "varchar",
+                        isNullable: true,
+                    },
+                    {
+                        name: "alias_name",
+                        type: "varchar",
+                        isNullable: true,
+                    },
+                    {
+                        name: "type",
+                        type: "varchar",
+                        isNullable: true,
+                    },
+                    {
+                        name: "version",
+                        type: "varchar",
+                        isNullable: true,
+                    },
+                    {
+                        name: "status",
+                        type: "boolean",
+                        isNullable: false,
+                        default: true
+                    },
+                    {
+                        name: "is_enabled",
+                        type: "boolean",
+                        isNullable: false,
+                        default: true
+                    },
+                    {
+                        name: "release_date",
+                        type: "timestamp",
+                        isNullable: true,
+                    },
+                    {
                         name: "created_at",
                         type: "timestamp",
                         default: "CURRENT_TIMESTAMP",
@@ -40,6 +77,7 @@ export class PermissionsTable1743832113588 implements MigrationInterface {
             }),
             true
         );
+
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
