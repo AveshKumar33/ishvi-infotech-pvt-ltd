@@ -19,7 +19,6 @@ export function PermissionGuard(...requiredPermissions: string[]): Type<CanActiv
         async canActivate(context: ExecutionContext): Promise<boolean> {
             const request = context.switchToHttp().getRequest();
             const user: User = request.user;
-            console.log('user ::: --->>', user);
 
             if (!user) throw new ForbiddenException('User not found');
 
@@ -34,8 +33,6 @@ export function PermissionGuard(...requiredPermissions: string[]): Type<CanActiv
                 where: { id: user.role.id },
                 relations: ['role_permissions', 'role_permissions.permission'],
             });
-
-            console.log('role ::: --->>', role);
 
             if (!role) throw new ForbiddenException('Role not found');
 

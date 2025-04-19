@@ -12,7 +12,7 @@ export class PermissionController {
     return this.service.create(dto);
   }
 
-  @Get()
+  @Get('list')
   findAll() {
     return this.service.findAll();
   }
