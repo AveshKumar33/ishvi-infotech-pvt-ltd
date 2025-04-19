@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { UpdateRolePermissionDto } from './dto/update-role-permission.dto';
 import { handleException } from 'src/exceptions/exception-handler';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Role } from 'src/roles/entities/role.entity';
 import { Permission } from 'src/permission/entities/permission.entity';
@@ -61,4 +61,44 @@ export class RolePermissionService {
   remove(id: number) {
     return `This action removes a #${id} rolePermission`;
   }
+  async getPermission(role: string, permission: string) {
+    try {
+      const rolePermission = await this.rolePermissionRepository.findOne({
+        where: {
+          role: { id: role },
+          permission: { id: permission },
+        },
+        relations: ['role', 'permission'],
+      });
+
+      if (!rolePermission) {
+        return `No permission '${permission}' found for role '${role}'.`;
+      }
+
+      return rolePermission;
+    } catch (error) {
+      // Handle or log the error
+      throw new Error(`Failed to get permission: ${error.message}`);
+    }
+  }
+  async getPermissions(role: string, permissions: string[]) {
+    try {
+      const rolePermissions = await this.rolePermissionRepository.find({
+        where: {
+          role: { id: role },
+          permission: { id: In(permissions) },
+        },
+        relations: ['role', 'permission'],
+      });
+
+      if (!rolePermissions || rolePermissions.length === 0) {
+        return `No permissions found for role '${role}'.`;
+      }
+
+      return rolePermissions;
+    } catch (error) {
+      throw new Error(`Failed to get permissions: ${error.message}`);
+    }
+  }
+
 }

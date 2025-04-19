@@ -25,7 +25,17 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @UseInterceptors(
+    FileInterceptor("profile_picture", {
+      storage: diskStorage({
+        destination: imageFileStorage,
+        filename: editFileName
+      }),
+      fileFilter: imageFileFilter
+    })
+  )
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(new UploadFileValidationPipe()) file: Express.Multer.File) {
+    if (file) Object.assign(updateUserDto, { profile_picture: file?.filename })
     return this.usersService.update(id, updateUserDto);
   }
 

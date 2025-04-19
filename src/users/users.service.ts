@@ -5,6 +5,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { handleException } from 'src/exceptions/exception-handler';
+import * as bcrypt from 'bcrypt';
+import { Role } from 'src/roles/entities/role.entity';
 
 
 @Injectable()
@@ -52,11 +54,43 @@ export class UsersService implements OnModuleInit {
     }
   }
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    const { email, name, role_id, password, profile_picture } = updateUserDto;
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const updated = this.userRepository.merge(user, updateUserDto);
-    return await this.userRepository.save(updated);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id } });
+      if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+
+      if (email) user.email = email;
+      if (name) user.name = name;
+      if (profile_picture) user.profile_picture = profile_picture;
+
+      if (password) {
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(password, salt);
+      }
+
+      if (role_id) {
+        const role = await queryRunner.manager.findOne(Role, { where: { id: role_id } });
+        if (!role) throw new NotFoundException('Role not found');
+        user.role = role;
+      }
+
+      const updatedUser = await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction();
+      return updatedUser;
+
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      handleException(error, 'Error occurred while updating the user');
+      throw error;
+
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async remove(id: string): Promise<{ message: string }> {

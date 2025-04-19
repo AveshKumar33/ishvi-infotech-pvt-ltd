@@ -10,6 +10,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { GetUser } from 'src/decorators/get-auth-user.decorator';
+import { PermissionGuard } from 'src/guards/permission.guards';
 
 @Controller('auth')
 export class AuthController {
@@ -35,11 +36,9 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionGuard('user_list'))
   @Get('profile')
   getProfile(@Request() req, @GetUser() user: User) {
-    console.log('auth user :: --->>', user);
-
     return req.user;
   }
 }

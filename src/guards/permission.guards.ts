@@ -9,6 +9,7 @@ import {
 import { DataSource } from 'typeorm';
 import { Reflector } from '@nestjs/core';
 import { User } from 'src/users/entities/user.entity';
+import { Role } from 'src/roles/entities/role.entity';
 
 export function PermissionGuard(...requiredPermissions: string[]): Type<CanActivate> {
     @Injectable()
@@ -18,6 +19,7 @@ export function PermissionGuard(...requiredPermissions: string[]): Type<CanActiv
         async canActivate(context: ExecutionContext): Promise<boolean> {
             const request = context.switchToHttp().getRequest();
             const user: User = request.user;
+            console.log('user ::: --->>', user);
 
             if (!user) throw new ForbiddenException('User not found');
 
@@ -28,10 +30,12 @@ export function PermissionGuard(...requiredPermissions: string[]): Type<CanActiv
                 throw new ForbiddenException('User role is missing');
             }
 
-            const role = await this.dataSource.getRepository('roles').findOne({
+            const role = await this.dataSource.getRepository(Role).findOne({
                 where: { id: user.role.id },
                 relations: ['role_permissions', 'role_permissions.permission'],
             });
+
+            console.log('role ::: --->>', role);
 
             if (!role) throw new ForbiddenException('Role not found');
 
@@ -47,3 +51,4 @@ export function PermissionGuard(...requiredPermissions: string[]): Type<CanActiv
 
     return mixin(MixinPermissionGuard);
 }
+
